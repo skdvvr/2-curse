@@ -1,16 +1,39 @@
-@echo off
-chcp 1251 > log
-del log
+#!/bin/bash
 
-set CHARSTER="-finput-charset=utf-8 -fexec-charset=utf-8"
+EXE="main"
+CPP="main.cpp"
+COMPILER="g++"
 
-set EXE=main.exe 
-set CPP=main.cpp 
-set INCLUDE="/home/varya/Desktop/ITbusko/2-curse/mario/lib/PDCurses"
-set BINARY="/home/varya/Desktop/ITbusko/2-curse/mario/lib/PDCurses/x11 -libpdcurses"
+# Пути к PDCurses
+CURSES_DIR="/home/varya/Desktop/ITbusko/2-curse/mario/lib/PDCurses"
+LIB_DIR="$CURSES_DIR/x11"
 
-if exist %EXE% del %EXE%
+# Проверка существования библиотеки
+if [ ! -f "$LIB_DIR/libpdcurses.a" ]; then
+    echo "Ошибка: Библиотека libpdcurses.a не найдена в $LIB_DIR"
+    exit 1
+fi
 
-g++ "%CHARSET%" "%INCLUDE%" %CPP% -o %EXE% "%BINARY%"
+# Удаление предыдущего исполняемого файла
+[ -f "$EXE" ] && rm "$EXE"
 
-%EXE%
+# Компиляция с отладочной информацией
+$COMPILER -g -std=c++17 -I"$CURSES_DIR" -L"$LIB_DIR" "$CPP" -o "$EXE" \
+    -lpdcurses \
+    -lX11 \
+    -lXt \
+    -lXmu \
+    -lXaw \
+    -lXext \
+    -lSM \
+    -lICE \
+    -lXpm
+
+# Проверка успешности компиляции и запуск
+if [ $? -eq 0 ]; then
+    echo "Сборка успешна! Запускаю $EXE..."
+    ./"$EXE"
+else
+    echo "Ошибка компиляции!"
+    exit 1
+fi
