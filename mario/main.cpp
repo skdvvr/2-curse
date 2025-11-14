@@ -24,8 +24,11 @@ TObject *brick = NULL;
 int brickLength;
 
 TObject *moving = NULL;
-int movingLength;
 
+// Дорогой Саша, мы с Ильёй Владимировичем ждали тебя всю пару. И не дождались. Мы очень расстроились, что ты не смог сегодня прийти на учёбу. 
+//Саша, ходи, пожалуйста, на пары. Тебе здесь все рады!
+
+int movingLength;
 int level = 1;
 int score;
 int maxlvl;
@@ -41,7 +44,7 @@ void ClearMap () {
 void ShowMap(){
     map [mapHeight - 1][mapwidth - 1] = '\0';
     for (int j = 0; j <mapHeight; j++)
-        printw("%s\n",map[j]);
+        printw("%s",map[j]);
 }
 
 void SetObjectPos(TObject *obj,float xPos, float yPos){
@@ -228,8 +231,8 @@ void CreateLevel (int lvl){
         InitObject(GetNewBrick(), 45, 10, 2, 2, '?');
         InitObject(GetNewBrick(), 75, 5, 2, 2, '+');
 
-        InitObject(GetNewMoving(), 25, 19, 1, 1, 'o');
-        InitObject(GetNewMoving(), 55, 19, 1, 1, 'o');
+        InitObject(GetNewMoving(), 25, 10, 2, 2, 'o');
+        InitObject(GetNewMoving(), 55, 10, 2, 2, 'o');
     }
 
     if (lvl == 2){
@@ -274,13 +277,30 @@ void CreateLevel (int lvl){
 
 int main(){
     initscr();
+    //resize_term(30, 120);
     curs_set(0);
     noecho();
     nodelay(stdscr, true);
     keypad(stdscr,true);
 
-    int rows,cols;
+    int rows = 24, cols = 80;
     getmaxyx(stdscr,rows,cols);
+
+    // Если терминал слишком мал, пытаемся использовать доступное пространство
+/*if (LINES < 25 || COLS < 250) {
+    if (LINES < 20 || COLS < 80) {
+        endwin();
+        printf("Terminal is too small. Minimum size: 80x20\n");
+        printf("Current size: %dx%d\n", COLS, LINES);
+        return 1;
+    }*/
+    /*printw("Terminal size: %dx%d (min: 250x25)", COLS, LINES);
+    printw("\nTrying to adapt... Press any key.");
+    refresh();
+    getch();
+    clear();
+    // Здесь можно добавить логику адаптации интерфейса
+}
 
     if (rows < mapHeight || cols < mapwidth){
         endwin();
@@ -293,8 +313,8 @@ int main(){
         start_color();
         init_pair(1, COLOR_RED, COLOR_BLACK);
         init_pair(2, COLOR_GREEN, COLOR_BLACK);
-        init_pair(3, COLOR_BLUE, COLOR_BLACK);
-    }
+        init_pair(3, COLOR_BLUE, COLOR_BLACK); 
+    } */
     
     CreateLevel(level);
 
@@ -308,9 +328,9 @@ int main(){
         if (!mario.IsFly && key == ' ') 
             mario.vertSpeed = -0.8;
         if (key == 'a') 
-            HorizonMoveMap(0.5);
+            HorizonMoveMap(1);
         if (key == 'd') 
-            HorizonMoveMap(-0.5);
+            HorizonMoveMap(-1);
 
         if (mario.y > mapHeight) 
             PlayerDead();
